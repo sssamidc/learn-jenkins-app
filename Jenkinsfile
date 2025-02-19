@@ -20,5 +20,13 @@ pipeline {
 				'''
 			}
 		}
+		stage('Test') {
+			steps {
+				sh '''
+					ls -l
+					ls -lhrt build | grep index\.html
+				'''
+			}
+		}
 	}
 }
