@@ -24,7 +24,7 @@ pipeline {
 			steps {
 				sh '''
 					ls -l
-					ls -lhrt build | grep index\.html
+					ls -lhrt build | grep 'index.html'
 				'''
 			}
 		}
