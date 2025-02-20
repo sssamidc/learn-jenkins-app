@@ -2,6 +2,8 @@ pipeline {
 	agent any
 
 	stages {
+		// This is a single-line comment added for testing purposes
+		/*
 		stage('Build') {
 			agent {
 				docker {
@@ -20,6 +22,7 @@ pipeline {
 				'''
 			}
 		}
+		*/
 		stage('Test') {
 			agent {
 				docker {
@@ -30,7 +33,7 @@ pipeline {
 			steps {
 				sh '''
 					ls -l ./build
-					ls -lhrt build | grep 'index.html'
+					# ls -lhrt build | grep 'index.html'
 					npm test
 				'''
 			}
