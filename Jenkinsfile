@@ -3,7 +3,6 @@ pipeline {
 
 	stages {
 		// This is a single-line comment added for testing purposes
-		/*
 		stage('Build') {
 			agent {
 				docker {
@@ -22,7 +21,7 @@ pipeline {
 				'''
 			}
 		}
-		*/
+
 		stage('Test') {
 			agent {
 				docker {
@@ -38,6 +37,26 @@ pipeline {
 				'''
 			}
 		}
+
+		stage('E2E Test') {
+			agent {
+				docker {
+					image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+					reuseNode true
+				}
+			}
+			steps {
+				sh '''
+					ls -l ./build
+					# ls -lhrt build | grep 'index.html'
+					# Create server
+					npm install -g serve
+					serve -s build
+					npx playwright test
+				'''
+			}
+		}
+
 	}
 
 	post {
