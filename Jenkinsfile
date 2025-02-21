@@ -50,8 +50,12 @@ pipeline {
 					ls -l ./build
 					# ls -lhrt build | grep 'index.html'
 					# Create server
-					npm install -g serve
-					serve -s build
+					npm install serve
+					# Add sleep for the server to get ready for incoming requests
+					sleep 10
+					# Start serving (in the background)
+					node_modules/.bin/serve -s build &
+					# Perform the tests
 					npx playwright test
 				'''
 			}
