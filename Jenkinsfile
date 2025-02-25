@@ -22,45 +22,49 @@ pipeline {
 			}
 		}
 
-		stage('Test') {
-			agent {
-				docker {
-					image 'node:18-alpine'
-					reuseNode true
+		stage('Run Tests') {
+			parallel {
+				stage('Unit Tests') {
+					agent {
+						docker {
+							image 'node:18-alpine'
+							reuseNode true
+						}
+					}
+					steps {
+						sh '''
+							ls -l ./build
+							# ls -lhrt build | grep 'index.html'
+							npm test
+						'''
+					}
 				}
-			}
-			steps {
-				sh '''
-					ls -l ./build
-					# ls -lhrt build | grep 'index.html'
-					npm test
-				'''
+		
+				stage('E2E Tests') {
+					agent {
+						docker {
+							image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+							reuseNode true
+						}
+					}
+					steps {
+						sh '''
+							ls -l ./build
+							# ls -lhrt build | grep 'index.html'
+							# Create server
+							npm install serve
+							# Add sleep for the server to get ready for incoming requests
+							sleep 10
+							# Start serving (in the background)
+							node_modules/.bin/serve -s build &
+							# Perform the tests
+							npx playwright test --report=html
+						'''
+					}
+				}
+
 			}
 		}
-
-		stage('E2E Test') {
-			agent {
-				docker {
-					image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
-					reuseNode true
-				}
-			}
-			steps {
-				sh '''
-					ls -l ./build
-					# ls -lhrt build | grep 'index.html'
-					# Create server
-					npm install serve
-					# Add sleep for the server to get ready for incoming requests
-					sleep 10
-					# Start serving (in the background)
-					node_modules/.bin/serve -s build &
-					# Perform the tests
-					npx playwright test
-				'''
-			}
-		}
-
 	}
 
 	post {
