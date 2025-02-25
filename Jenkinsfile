@@ -64,7 +64,7 @@ pipeline {
 							# Start serving (in the background)
 							node_modules/.bin/serve -s build &
 							# Perform the tests
-							npx playwright test --report=html
+							npx playwright test
 						'''
 					}
 
